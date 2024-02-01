@@ -1,11 +1,10 @@
-import express from 'express';
-import { signupController} from '../controllers/authController.js'
+import express from 'express'
+import { forgetPasswordController, loginController, logoutController, signUpController } from '../controllers/authController.js';
+const authRoute = express.Router();
 
-const authRoute = express.Router()
+authRoute.route('/signup').post(signUpController)
+authRoute.route('/login').post(loginController)
+authRoute.route('/logout').post(logoutController)
+authRoute.route('/forgetPassword').put(forgetPasswordController)
 
-authRoute.post("/signup",signupController)
-// authRoute.post("/login",loginController)
-// authRoute.post("/logout",logoutController)
-// authRoute.put("/forgetPassword",forgetPasswordController)
-
-export { authRoute };
+export { authRoute }

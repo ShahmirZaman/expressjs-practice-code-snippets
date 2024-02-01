@@ -1,33 +1,57 @@
-import UsersSchema from '../model/user.js'
-
-export const signupController = async(req,res) => {
-    try {
-        const { userName,userEmail,password } = req.body;
-        console.log("UserName ==>>>>",userName);
-        console.log(typeof userName);
-
-        console.log(password,"=====>>>Password")
-        if(password.length < 8) return res.send(400).json({
+export const signUpController = (req,res) => {
+    try{
+        const { userName, userEmail, password } = req.body;
+        if(password.length < 8 ) return res.status(400).json({
             status:false,
-            message:"Password length should be minimum 8 characters"
+            message:"Password Length Should Be Minimum 8 Characters!",
         })
         const user = {
             userName:userName,
-            email:userEmail,
+            userEmail:userEmail,
             password:password
         }
-
-        const userSchemaCheck = new UsersSchema(user)
-        const userSave = await userSchemaCheck.save()
-
-        res.json({
+        res.status(200).json({
             status:true,
             message:"User Signed Up Successfully"
         })
-    } catch(err) {
+    } catch(error) {
         res.json({
             status:false,
-            message:err.message
+            message:error.message
         })
     }
+}
+
+export const loginController = (req,res) => {
+    try{
+        const { userEmail, password} = req.body
+        if(!userEmail || !password) return res.status(400).json({
+            status:false,
+            message:"Missing Fields"
+        })
+        res.status(200).json({
+            status:true,
+            message:"User Login Successfully"
+        })
+    } 
+    catch(error) {
+        res.status(500).json({
+            status:false,
+            message:"Internal Server Error"
+        })
+    }
+}
+
+export const logoutController = (req,res) => {
+    res.json({
+        status:true,
+        message:"Logout Successfully"
+    })
+}
+
+export const forgetPasswordController = (req,res) => {
+    res.json({
+        status:true,
+        message:"Forget Password Successfully"
+    })
 }
