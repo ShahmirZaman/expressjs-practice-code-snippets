@@ -1,4 +1,6 @@
-export const signUpController = (req,res) => {
+import UsersSchema from '../models/user.js'
+
+export const signUpController = async(req,res) => {
     try{
         const { userName, userEmail, password } = req.body;
         if(password.length < 8 ) return res.status(400).json({
@@ -7,9 +9,12 @@ export const signUpController = (req,res) => {
         })
         const user = {
             userName:userName,
-            userEmail:userEmail,
+            email:userEmail,
             password:password
         }
+        const usersSchemaCheck = new UsersSchema(user)
+        const usersSave = await usersSchemaCheck.save()
+
         res.status(200).json({
             status:true,
             message:"User Signed Up Successfully"
@@ -22,17 +27,30 @@ export const signUpController = (req,res) => {
     }
 }
 
-export const loginController = (req,res) => {
+export const loginController = async(req,res) => {
     try{
         const { userEmail, password} = req.body
         if(!userEmail || !password) return res.status(400).json({
             status:false,
             message:"Missing Fields"
         })
-        res.status(200).json({
-            status:true,
-            message:"User Login Successfully"
-        })
+        const isUserExist = await UsersSchema.findOne({ email:userEmail })
+        console.log(isUserExist,"===>>>>IsUserExist")
+        if(isUserExist) {
+            if(isUserExist.password === password) return res.status(200).json({
+                status:true,
+                message:"User Found"
+            })
+            res.status(400).json({
+                status:false,
+                message:"Invalid Credentials"
+            })
+        } else {
+            res.status(400).json({
+                status:false,
+                message:"User not found"
+            })
+        }
     } 
     catch(error) {
         res.status(500).json({
